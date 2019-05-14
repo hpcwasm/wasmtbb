@@ -32,7 +32,9 @@
 #elif __FreeBSD__ || __NetBSD__ || __OpenBSD__ || __sun || _AIX
 #define RML_SERVER_NAME "libirml" DEBUG_SUFFIX ".so"
 #else
-#error Unknown OS
+//#error Unknown OS
+#warning "WASMPORT: dynamic linking not supported"
+#define RML_SERVER_NAME "libirml" DEBUG_SUFFIX ".so"
 #endif
 
 const ::rml::versioned_object::version_type CLIENT_VERSION = 2;

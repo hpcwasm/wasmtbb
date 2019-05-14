@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+$(info ***************** using common.inc)
+
 ifndef tbb_os
 
   # Windows sets environment variable OS; for other systems, ask uname
@@ -28,6 +30,7 @@ ifndef tbb_os
   endif
   ifeq ($(OS), Linux)
     export tbb_os=linux
+    $(info ***************** tbb_os=$(tbb_os))
   endif
   ifeq ($(OS), Darwin)
     export tbb_os=macos
@@ -53,9 +56,12 @@ endif
 # Define C & C++ compilers according to platform defaults or CXX & CC environment variables
 ifneq (,$(findstring environment, $(origin CXX)))
     CPLUS = $(CXX)
+    ifneq (,$(findstring em++, $(CPLUS)))
+      export compiler:=emscripten
+    endif
 endif
 ifneq (,$(findstring environment, $(origin CC)))
-    CONLY = $(CC)
+    CONLY = $(CC)    
 endif
 
 ifneq (,$(stdver))
@@ -63,12 +69,15 @@ ifneq (,$(stdver))
         $(warning "Warning: unexpected stdver=$(stdver) is used.")
     endif
     CXX_STD_FLAGS=-std=$(stdver)
+    
 endif
+$(info ***************** CXX_STD_FLAGS=$(CXX_STD_FLAGS))
 
 # The requested option is added unconditionally.
 # If it is not supported, a compiler warning or error is expected.
 # Note that CXX_STD_FLAGS can be changed in <os>.<compiler>.inc.
 CXX_ONLY_FLAGS+=$(CXX_STD_FLAGS)
+$(info ***************** CXX_ONLY_FLAGS=$(CXX_ONLY_FLAGS))
 
 ifeq (,$(wildcard $(tbb_root)/build/$(tbb_os).inc))
   $(error "$(tbb_os)" is not supported. Add build/$(tbb_os).inc file with os-specific settings )

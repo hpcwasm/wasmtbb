@@ -112,6 +112,7 @@
 
 #include "tbb_stddef.h"
 
+
 namespace tbb {
 namespace internal { //< @cond INTERNAL
 
@@ -223,23 +224,33 @@ template<> struct atomic_selector<8> {
         #include "machine/linux_intel64.h"
     #endif
 
-#elif __linux__ || __FreeBSD__ || __NetBSD__ || __OpenBSD__
-
+#elif __linux__ || __FreeBSD__ || __NetBSD__ || __OpenBSD__ || __emscripten__
     #if (TBB_USE_GCC_BUILTINS && __TBB_GCC_BUILTIN_ATOMICS_PRESENT)
+        #error "WASM"
         #include "machine/gcc_generic.h"
     #elif (TBB_USE_ICC_BUILTINS && __TBB_ICC_BUILTIN_ATOMICS_PRESENT)
+        #error "WASM"
         #include "machine/icc_generic.h"
     #elif __i386__
+        #error "WASM"
         #include "machine/linux_ia32.h"
+    #elif __wasm32__
+        #warning "wasmport machine/linux_wasm32.h"
+        #include "machine/linux_wasm32.h"        
     #elif __x86_64__
+        #error "WASM"
         #include "machine/linux_intel64.h"
     #elif __ia64__
+         #error "WASM"
         #include "machine/linux_ia64.h"
     #elif __powerpc__
+        #error "WASM"
         #include "machine/mac_ppc.h"
     #elif __ARM_ARCH_7A__ || __aarch64__
+        #error "WASM"
         #include "machine/gcc_arm.h"
     #elif __TBB_GCC_BUILTIN_ATOMICS_PRESENT
+        #error "WASM"
         #include "machine/gcc_generic.h"
     #endif
     #include "machine/linux_common.h"

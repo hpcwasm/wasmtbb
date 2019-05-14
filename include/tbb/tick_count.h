@@ -110,6 +110,8 @@ inline tick_count tick_count::now() {
     int status = clock_gettime( CLOCK_REALTIME, &ts );
     __TBB_ASSERT_EX( status==0, "CLOCK_REALTIME not supported" );
     result.my_count = static_cast<long long>(1000000000UL)*static_cast<long long>(ts.tv_sec) + static_cast<long long>(ts.tv_nsec);
+#elif defined(BUILD_WASM) 
+    result.my_count = (long long)(emscripten_get_now() * 1000.0); 
 #else /* generic Unix */
     struct timeval tv;
     int status = gettimeofday(&tv, NULL);

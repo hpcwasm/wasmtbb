@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+$(info *********** common.rules.inc)
 
 ifeq ($(tbb_strict),1)
   ifeq ($(WARNING_AS_ERROR_KEY),)

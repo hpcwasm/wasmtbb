@@ -14,54 +14,70 @@
 
 ####### Detections and Commands ###############################################
 
-ifeq (icc,$(compiler))
-  export COMPILER_VERSION := ICC: $(shell icc -V </dev/null 2>&1 | grep 'Version')
-  ifneq (,$(findstring running on IA-32, $(COMPILER_VERSION)))
-    export arch:=ia32
-  else
-    ifneq (,$(findstring running on Intel(R) 64, $(COMPILER_VERSION)))
-      export arch:=intel64
-    else
-      ifneq (,$(findstring IA-64, $(COMPILER_VERSION)))
-        export arch:=ia64
-      endif
-    endif
-  endif
-  ifeq (,$(arch))
-    $(warning "Unknown Intel compiler")
-  endif
-endif
+$(info ***************** using linux.inc)
 
-ifndef arch
-        uname_m:=$(shell uname -m)
-        ifeq ($(uname_m),i686)
-                export arch:=ia32
-        endif
-        ifeq ($(uname_m),ia64)
+ifeq (,$(findstring emscripten,$(compiler)))
+
+        ifeq (icc,$(compiler))
+        export COMPILER_VERSION := ICC: $(shell icc -V </dev/null 2>&1 | grep 'Version')
+        ifneq (,$(findstring running on IA-32, $(COMPILER_VERSION)))
+        export arch:=ia32
+        else
+        ifneq (,$(findstring running on Intel(R) 64, $(COMPILER_VERSION)))
+        export arch:=intel64
+        else
+        ifneq (,$(findstring IA-64, $(COMPILER_VERSION)))
                 export arch:=ia64
         endif
-        ifeq ($(uname_m),x86_64)
-                export arch:=intel64
         endif
-        ifeq ($(uname_m),sparc64)
-                export arch:=sparc
         endif
-        ifeq ($(uname_m),armv7l)
-                export arch:=armv7
+        ifeq (,$(arch))
+        $(warning "Unknown Intel compiler")
         endif
+        endif
+
+
         ifndef arch
-                export arch:=$(uname_m)
+                uname_m:=$(shell uname -m)
+                ifeq ($(uname_m),i686)
+                        export arch:=ia32
+                endif
+                ifeq ($(uname_m),ia64)
+                        export arch:=ia64
+                endif
+                ifeq ($(uname_m),x86_64)
+                        export arch:=intel64
+                endif
+                ifeq ($(uname_m),sparc64)
+                        export arch:=sparc
+                endif
+                ifeq ($(uname_m),armv7l)
+                        export arch:=armv7
+                endif
+                ifndef arch
+                        export arch:=$(uname_m)
+                endif
         endif
+
+
+        
+
+        ifndef runtime
+                export gcc_version:=$(shell gcc -dumpversion)
+                os_version:=$(shell uname -r)
+                os_kernel_version:=$(shell uname -r | sed -e 's/-.*$$//')
+                export os_glibc_version_full:=$(shell getconf GNU_LIBC_VERSION | grep glibc | sed -e 's/^glibc //')
+                os_glibc_version:=$(shell echo "$(os_glibc_version_full)" | sed -e '2,$$d' -e 's/-.*$$//')
+                export runtime:=cc$(gcc_version)_libc$(os_glibc_version)_kernel$(os_kernel_version)
+        endif
+
+else
+        export runtime:=emscripten_wasm32
+        export arch:=wasm32
 endif
 
-ifndef runtime
-        export gcc_version:=$(shell gcc -dumpversion)
-        os_version:=$(shell uname -r)
-        os_kernel_version:=$(shell uname -r | sed -e 's/-.*$$//')
-        export os_glibc_version_full:=$(shell getconf GNU_LIBC_VERSION | grep glibc | sed -e 's/^glibc //')
-        os_glibc_version:=$(shell echo "$(os_glibc_version_full)" | sed -e '2,$$d' -e 's/-.*$$//')
-        export runtime:=cc$(gcc_version)_libc$(os_glibc_version)_kernel$(os_kernel_version)
-endif
+$(info ***************** arch=$(arch))
+$(info ***************** runtime=$(runtime))
 
 native_compiler := gcc
 export compiler ?= gcc
@@ -76,7 +92,7 @@ MD?=mkdir -p
 NUL= /dev/null
 SLASH=/
 MAKE_VERSIONS=sh $(tbb_root)/build/version_info_linux.sh $(VERSION_FLAGS) >version_string.ver
-MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh
+#MAKE_TBBVARS=sh $(tbb_root)/build/generate_tbbvars.sh
 
 ifdef LD_LIBRARY_PATH
         export LD_LIBRARY_PATH := .:$(LD_LIBRARY_PATH)
@@ -101,6 +117,9 @@ endif
 ifeq ($(arch),armv7)
         def_prefix = lin32
 endif
+ifeq ($(arch),wasm32)
+        def_prefix = wasm32
+endif
 ifeq (,$(def_prefix))
     ifeq (64,$(findstring 64,$(arch)))
             def_prefix = lin64
@@ -108,6 +127,8 @@ ifeq (,$(def_prefix))
             def_prefix = lin32
     endif
 endif
+
+
 TBB.LST = $(tbb_root)/src/tbb/$(def_prefix)-tbb-export.lst
 TBB.DEF = $(TBB.LST:.lst=.def)
 

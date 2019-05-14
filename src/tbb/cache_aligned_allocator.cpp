@@ -103,7 +103,11 @@ static const dynamic_link_descriptor MallocLinkTable[] = {
 #elif __linux__  // Note that order of these #elif's is important!
 #define MALLOCLIB_NAME "libtbbmalloc" DEBUG_SUFFIX  __TBB_STRING(.so.TBB_COMPATIBLE_INTERFACE_VERSION)
 #else
-#error Unknown OS
+    #ifndef  BUILD_WASM
+        #error Unknown OS
+    #else
+        #warning "using std::free and std::malloc"
+    #endif
 #endif
 
 //! Initialize the allocation/free handler pointers.
@@ -112,6 +116,7 @@ static const dynamic_link_descriptor MallocLinkTable[] = {
     If that allocator is not found, it links to malloc and free. */
 void initialize_handler_pointers() {
     __TBB_ASSERT( MallocHandler==&DummyMalloc, NULL );
+    #ifndef  BUILD_WASM
     bool success = dynamic_link( MALLOCLIB_NAME, MallocLinkTable, 4 );
     if( !success ) {
         // If unsuccessful, set the handlers to the default routines.
@@ -123,6 +128,13 @@ void initialize_handler_pointers() {
         padded_allocate_handler = &padded_allocate;
         padded_free_handler = &padded_free;
     }
+    #else //  BUILD_WASM
+        bool success = true;
+        FreeHandler = &std::free;
+        MallocHandler = &std::malloc;
+        padded_allocate_handler = &padded_allocate;
+        padded_free_handler = &padded_free;
+    #endif
 #if !__TBB_RML_STATIC
     PrintExtraVersionInfo( "ALLOCATOR", success?"scalable_malloc":"malloc" );
 #endif

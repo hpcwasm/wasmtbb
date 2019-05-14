@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+$(info ********************************************************************************* Makefile.rml)
+
 # TODO: investigate why version_string.ver is not complete when $(RML_SERVER.OBJ) is being compiled.
 .NOTPARALLEL:
 

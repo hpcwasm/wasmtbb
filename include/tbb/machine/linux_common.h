@@ -23,7 +23,12 @@
 
 #include <unistd.h>
 /* Futex definitions */
+
 #include <sys/syscall.h>
+
+#if defined BUILD_WASM 
+#undef SYS_futex
+#endif
 
 #if defined(SYS_futex)
 /* This header file is included for Linux and some other systems that may support futexes.*/

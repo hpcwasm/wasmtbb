@@ -32,6 +32,9 @@
 # Note that usage of dynamic (shared) libraries is disabled
 # (via -D__TBB_DYNAMIC_LOAD_ENABLED=0 and LIBDL emptied) primarily for performance.
 
+
+$(info ***************** using big_iron.inc)
+
 # OS specific settings =>
     LIB_LINK_CMD = ar rcs
     LIB_LINK_FLAGS =
