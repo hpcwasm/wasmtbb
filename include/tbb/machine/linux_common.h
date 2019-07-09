@@ -18,6 +18,8 @@
 #error Do not #include this internal file directly; use public TBB headers instead.
 #endif
 
+#warning "WASMPORT: linux_common.h"
+
 #include <sched.h>
 #define __TBB_Yield()  sched_yield()
 

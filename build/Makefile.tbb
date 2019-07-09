@@ -28,7 +28,7 @@ DEBUG_SUFFIX=$(findstring _debug,_$(cfg))
 #------------------------------------------------------------
 # Define static pattern rules dealing with .cpp source files
 #------------------------------------------------------------
-$(warning CONFIG: cfg=$(cfg) arch=$(arch) compiler=$(compiler) target=$(target) runtime=$(runtime))
+$(info ************** CONFIG: cfg $(cfg) arch $(arch) compiler $(compiler) target $(target) runtime $(runtime))
 
 default_tbb: $(TBB.DLL)
 .PHONY: default_tbb tbbvars clean
@@ -37,6 +37,8 @@ default_tbb: $(TBB.DLL)
 VPATH = $(tbb_root)/src/tbb/$(ASSEMBLY_SOURCE) $(tbb_root)/src/tbb $(tbb_root)/src/old $(tbb_root)/src/rml/client
 
 CPLUS_FLAGS += $(PIC_KEY) $(DSE_KEY) $(DEFINE_KEY)__TBB_BUILD=1
+
+$(info ************** CPLUS_FLAGS: $(CPLUS_FLAGS))
 
 # Object files (that were compiled from C++ code) that gmake up TBB
 TBB_CPLUS.OBJ = concurrent_hash_map.$(OBJ) \
@@ -81,8 +83,9 @@ TBB.OBJ = $(TBB_CPLUS.OBJ) $(TBB_CPLUS_OLD.OBJ) $(TBB_ASM.OBJ)
 WARNING_KEY += $(WARNING_SUPPRESS)
 
 include $(tbb_root)/build/common_rules.inc
-
+$(info ***************** TBB.DEF1 $(TBB.DEF))
 ifneq (,$(TBB.DEF))
+$(info ***************** TBB.DEF2 $(TBB.DEF))
 tbb.def: $(TBB.DEF) $(TBB.LST)
 	$(CPLUS) $(PREPROC_ONLY) $< $(CPLUS_FLAGS) $(INCLUDES) > $@
 

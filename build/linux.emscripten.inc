@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(info ********************* using linux.clang.inc)
+$(info ********************* using linux.emscripten.inc)
 
 CPLUS ?= clang++
 CONLY ?= clang
@@ -22,7 +22,7 @@ INCLUDE_KEY = -I
 DEFINE_KEY = -D
 OUTPUT_KEY = -o #
 OUTPUTOBJ_KEY = -o #
-PIC_KEY = -fPIC
+PIC_KEY = 
 WARNING_AS_ERROR_KEY = -Werror
 WARNING_KEY = -Wall -Wextra
 TEST_WARNING_KEY = -Wshadow -Wcast-qual -Woverloaded-virtual -Wnon-virtual-dtor
@@ -58,6 +58,11 @@ endif
 CPLUS_FLAGS += -DBUILD_WASM 
 CPLUS_FLAGS += -D__was32__
 CPLUS_FLAGS += -D__emscripten__
+CPLUS_FLAGS += -D__linux__=0
+# -s WASM_OBJECT_FILES=1
+CPLUS_FLAGS += -s USE_PTHREADS=1 -s USE_ZLIB=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s NO_FILESYSTEM=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=0 -s PTHREAD_POOL_SIZE=2 -s TOTAL_MEMORY=536870912 -s WASM_MEM_MAX=536870912
+CPLUS_FLAGS += -D__TBB_TASK_GROUP_CONTEXT=1
+CPLUS_FLAGS += -DTBB_USE_EXCEPTIONS=0
 #CPLUS_FLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0
 #CPLUS_FLAGS += -D__TBB_SOURCE_DIRECTLY_INCLUDED=0
 
@@ -69,7 +74,8 @@ ifeq (wasm32,$(arch))
     LIB_LINK_FLAGS += -m32
 endif
 
-
+$(info ********************* using CPLUS_FLAGS $(CPLUS_FLAGS))
+$(info ********************* using LIB_LINK_FLAGS $(LIB_LINK_FLAGS))
 
 #------------------------------------------------------------------------------
 # Setting assembler data.

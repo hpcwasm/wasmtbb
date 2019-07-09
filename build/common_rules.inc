@@ -46,7 +46,11 @@ CPLUS_FLAGS += $(WARNING_KEY) $(CXXFLAGS)
 ifeq (1,$(tbb_cpf))
 CPLUS_FLAGS += $(DEFINE_KEY)__TBB_CPF_BUILD=1
 endif
+
+exceptions = 0
+$(info *********** common.rules.inc exceptions$(exceptions) )
 ifeq (0,$(exceptions))
+$(info *********** common.rules.inc TBB_USE_EXCEPTIONS 0 )
 CPLUS_FLAGS += $(DEFINE_KEY)TBB_USE_EXCEPTIONS=0
 endif
 LINK_FLAGS += $(LDFLAGS)

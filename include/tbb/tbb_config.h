@@ -509,14 +509,27 @@ There are four cases that are supported:
 
 /** Internal TBB features & modes **/
 
+
+
 /** __TBB_WEAK_SYMBOLS_PRESENT denotes that the system supports the weak symbol mechanism **/
 #ifndef __TBB_WEAK_SYMBOLS_PRESENT
-#define __TBB_WEAK_SYMBOLS_PRESENT ( !_WIN32 && !__APPLE__ && !__sun && (__TBB_GCC_VERSION >= 40000 || __INTEL_COMPILER ) )
+    #ifdef __wasm32__
+    #else
+        #define __TBB_WEAK_SYMBOLS_PRESENT ( !_WIN32 && !__APPLE__ && !__sun && (__TBB_GCC_VERSION >= 40000 || __INTEL_COMPILER ) )
+    #endif
+#endif
+
+#ifdef __TBB_WEAK_SYMBOLS_PRESENT
+    #warning "WASMPORT: __TBB_WEAK_SYMBOLS_PRESENT"
 #endif
 
 /** __TBB_DYNAMIC_LOAD_ENABLED describes the system possibility to load shared libraries at run time **/
 #ifndef __TBB_DYNAMIC_LOAD_ENABLED
-    #define __TBB_DYNAMIC_LOAD_ENABLED 1
+    #ifndef __wasm32__
+        #define __TBB_DYNAMIC_LOAD_ENABLED 1
+    #else
+        #define __TBB_DYNAMIC_LOAD_ENABLED 0
+    #endif
 #endif
 
 /** __TBB_SOURCE_DIRECTLY_INCLUDED is a mode used in whitebox testing when

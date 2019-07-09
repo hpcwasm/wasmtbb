@@ -30,7 +30,7 @@ ifndef tbb_os
   endif
   ifeq ($(OS), Linux)
     export tbb_os=linux
-    $(info ***************** tbb_os=$(tbb_os))
+    $(info ***************** tbb_os $(tbb_os))
   endif
   ifeq ($(OS), Darwin)
     export tbb_os=macos
@@ -71,19 +71,20 @@ ifneq (,$(stdver))
     CXX_STD_FLAGS=-std=$(stdver)
     
 endif
-$(info ***************** CXX_STD_FLAGS=$(CXX_STD_FLAGS))
+$(info ***************** CXX_STD_FLAGS $(CXX_STD_FLAGS))
 
 # The requested option is added unconditionally.
 # If it is not supported, a compiler warning or error is expected.
 # Note that CXX_STD_FLAGS can be changed in <os>.<compiler>.inc.
 CXX_ONLY_FLAGS+=$(CXX_STD_FLAGS)
-$(info ***************** CXX_ONLY_FLAGS=$(CXX_ONLY_FLAGS))
+$(info ***************** CXX_ONLY_FLAGS $(CXX_ONLY_FLAGS))
 
 ifeq (,$(wildcard $(tbb_root)/build/$(tbb_os).inc))
   $(error "$(tbb_os)" is not supported. Add build/$(tbb_os).inc file with os-specific settings )
 endif
 
 # detect arch and runtime versions, provide common host-specific definitions
+$(info ***************** including $(tbb_root)/build/$(tbb_os).inc)
 include $(tbb_root)/build/$(tbb_os).inc
 
 ifeq ($(arch),)
@@ -97,11 +98,13 @@ endif
 ifdef target
  # optionally process target-dependent options for compilation and testing
  ifneq (,$(wildcard $(tbb_root)/build/$(target).inc))
+  $(info ***************** including $(tbb_root)/build/$(target).inc)
   include $(tbb_root)/build/$(target).inc
  endif
 
  # optionally process host-dependent environment for target-dependent compilation and testing
  ifneq (,$(wildcard $(tbb_root)/build/$(target).$(tbb_os).inc))
+  $(info ***************** including $(tbb_root)/build/$(target).$(tbb_os).inc)
   include $(tbb_root)/build/$(target).$(tbb_os).inc
  endif
 
@@ -126,6 +129,7 @@ ifdef BUILDING_PHASE
  ifeq (,$(wildcard $(tbb_root)/build/$(target).$(compiler_name).inc))
   $(error "$(compiler_name)" is not supported on $(target). Add build/$(target).$(compiler_name).inc file with compiler-specific settings. )
  endif
+ $(info ***************** including $(tbb_root)/build/$(target).$(compiler_name).inc)
  include $(tbb_root)/build/$(target).$(compiler_name).inc
 endif
 
@@ -142,6 +146,7 @@ ifdef offload
 endif
 ifdef extra_inc
  ifneq (,$(wildcard $(tbb_root)/build/$(extra_inc)))
+  $(info ***************** including $(tbb_root)/build/$(extra_inc))
   include $(tbb_root)/build/$(extra_inc)
  else
   $(error specified build file: "build/$(extra_inc)" is not found. )

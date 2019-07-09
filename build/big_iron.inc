@@ -36,23 +36,12 @@
 $(info ***************** using big_iron.inc)
 
 # OS specific settings =>
-    LIB_LINK_CMD = ar rcs
-    LIB_LINK_FLAGS =
+    LIB_LINK_CMD = emar rc
+    LIB_LINK_FLAGS = 
     LIB_LINK_LIBS =
     LIB_OUTPUT_KEY =
-    DYLIB_KEY =
-    ifeq ($(tbb_os),linux)
-        ifeq ($(compiler),clang)
-            LIBS = -pthread -lrt
-        endif
-        ifeq ($(compiler),gcc)
-            LIBS = -pthread -lrt
-        endif
-        ifeq ($(compiler),xl)
-            LIBS = -lpthread -lrt
-        endif
-        LINK_FLAGS =
-    endif
+    DYLIB_KEY = 
+
     override CXXFLAGS += -D__TBB_DYNAMIC_LOAD_ENABLED=0 -D__TBB_SOURCE_DIRECTLY_INCLUDED=1
     ITT_NOTIFY =
     DLL = a
@@ -60,6 +49,9 @@ $(info ***************** using big_iron.inc)
     LIBPREF = lib
     LIBDL =
 # <= OS specific settings
+
+$(info ********************* using CPLUS_FLAGS $(CPLUS_FLAGS))
+$(info ********************* using LIB_LINK_FLAGS $(LIB_LINK_FLAGS))
 
 TBB.DLL = $(LIBPREF)tbb$(DEBUG_SUFFIX).$(LIBEXT)
 LINK_TBB.LIB = $(TBB.DLL)

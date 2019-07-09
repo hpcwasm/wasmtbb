@@ -25,7 +25,7 @@
 #endif
 
 namespace tbb {
-
+ 
 #if !__TBB_TASK_GROUP_CONTEXT
     /** Dummy to avoid cluttering the bulk of the header with enormous amount of ifdefs. **/
     struct task_group_context {

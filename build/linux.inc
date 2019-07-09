@@ -76,8 +76,8 @@ else
         export arch:=wasm32
 endif
 
-$(info ***************** arch=$(arch))
-$(info ***************** runtime=$(runtime))
+$(info ***************** arch $(arch))
+$(info ***************** runtime $(runtime))
 
 native_compiler := gcc
 export compiler ?= gcc
@@ -129,8 +129,11 @@ ifeq (,$(def_prefix))
 endif
 
 
-TBB.LST = $(tbb_root)/src/tbb/$(def_prefix)-tbb-export.lst
-TBB.DEF = $(TBB.LST:.lst=.def)
+TBB.LST =$(tbb_root)/src/tbb/$(def_prefix)-tbb-export.lst
+TBB.DEF =$(TBB.LST:.lst=.def)
+
+$(info ***************** linux.inc  $(TBB.LST))
+$(info ***************** linux.inc  $(TBB.DEF))
 
 TBB.DLL = $(TBB_NO_VERSION.DLL).$(SONAME_SUFFIX)
 TBB.LIB = $(TBB.DLL)
